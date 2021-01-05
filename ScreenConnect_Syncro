@@ -1,4 +1,4 @@
-# This is an amalgamation of Steven Grabowski's & Sam James' scripts. Thanks Steven & Sam!
+#This is an amalgamation of Steven Grabowski's & Sam James' scripts. Thanks Steven & Sam!
 
 # This will deploy Screenconnect to your Syncro asset also enabling syncro integration.
 #   It will set the asset friendly name and company name from syncro in your screenconnect portal. (currently, the official syncro integration dosn't do this)
@@ -8,18 +8,23 @@
 #   Variable Name - $FriendlyName / Variable Type - platform / Value - asset_custom_field_device_name
 #   Variable Name - $CompanyName / Variable Type - platform / Value - customer_business_name_or_customer_full_name
 
-
 Import-Module $env:SyncroModule
 
-# URL for ScreenConnect msi download
-# Edit this URL to include variables: $FriendlyName & $CompanyName (Variables should go near the end of the URL)(this is to set the company name & asset friendly name in the screenconnect portal)
-$url = "https://******.screenconnect.com/bin/ConnectWiseControl.ClientSetup.msi?******************&e=Access&y=Guest&t=$FriendlyName&c=$CompanyName&c=&c=&c=&c=&c=&c=&c="
+# Replace this with YOUR screenconnect client service name (find it in programs & features on a computer which already has your screenconnect installed).
+$serviceName = 'ScreenConnect Client (CHANGEME)'
 
-# URL for your screenconnect instance, you can customize the port or leave it off
-$scdomain = "xxxxxxx.screenconnect.com"
+# URL for ScreenConnect msi download
+# Edit your screenconnect MSI installer URL to include variables: $FriendlyName & $CompanyName (near the end) (this is to set the company name & asset friendly name from syncro in the screenconnect portal)
+$url = "https://**CHANGEME**.screenconnect.com/bin/ConnectWiseControl.ClientSetup.msi?**CHANGEME**&e=Access&y=Guest&t=$FriendlyName&c=$CompanyName&c=&c=&c=&c=&c=&c=&c="
+
+# URL for your screenconnect instance.
+$scdomain = "CHANGEME.screenconnect.com"
+
+# Your syncro subdomain
+$subdomain = "CHANGEME"
 
 # Your email (for the ticket submission)
-$yourEmail = "xxxx@xxxxxxxxxxx.com"
+$yourEmail = "CHANGE@ME.COM"
 
 If (Get-Service $serviceName -ErrorAction SilentlyContinue) {
    If ((Get-Service $serviceName).Status -eq 'Running') {
@@ -74,4 +79,4 @@ $Match = $Regex.Match($val)
 if($Match.Success)
 {
 Set-Asset-Field -Subdomain $subdomain -Name "ScreenConnect GUID" -Value $Match
-}newnew
+}
