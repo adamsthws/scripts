@@ -74,5 +74,5 @@ $Regex = [Regex]::new("(?<=s=)(.*?)(?=&)")
 $Match = $Regex.Match($val)
 if($Match.Success)
 {
-Set-Asset-Field -Name "ScreenConnect GUID" -Value $Match
-}
+Set-Asset-Field -Subdomain $subdomain -Name "ScreenConnect GUID" -Value $Match
+}newnew
