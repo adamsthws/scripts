@@ -38,7 +38,6 @@ If (Get-Service $serviceName -ErrorAction SilentlyContinue) {
        
    Write-Host "$serviceName not found - need to install"
    (new-object System.Net.WebClient).DownloadFile($url,'C:\windows\temp\sc.msi')
-   # (OLD INSTALL COMMAND, WITHOUT WAIT) msiexec.exe /i c:\windows\temp\sc.msi /quiet
    Start-Process msiexec.exe -Wait -ArgumentList '/I c:\windows\temp\sc.msi /q'
    #$startAt = (Get-Date).AddMinutes(-30).toString("o")
    #Create-Syncro-Ticket-TimerEntry -TicketIdOrNumber $ticket.ticket.id -StartTime $startAt -DurationMinutes 5 -Notes "Automated system cleaned up the disk space." -UserIdOrEmail $yourEmail
