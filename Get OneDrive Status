@@ -3,9 +3,10 @@
 # Will record the status to an asset custom field & asset activity log. 
 # You must create an asset custom field named: 'OneDrive Status'
 
-# Limitations: 
+# Current Limitations: 
 # -Must turn off OnDrive 'files on demand'. If files on-demand is enabled, the script will return an error state. The module may get this ability in future, for details, see: https://docs.microsoft.com/en-gb/archive/blogs/rodneyviana/powershell-cmdlet-to-check-onedrive-for-business-or-onedrive-personal-status
 # -OneDrive Business only. (This is by design - it can be tweaked to work with OneDrive personal if desired)
+# -Date format is UK
 
 # By - Adam Matthews - https://unboundedtechnology.com
 # Inspired by Cyberdrain - https://www.cyberdrain.com/monitoring-with-powershell-monitoring-onedrive-status-for-current-logged-on-user/
