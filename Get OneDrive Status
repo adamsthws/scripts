@@ -1,18 +1,15 @@
 # Will get OneDrive status for the currently logged in user.
 # If OneDrive is not running or is in an error state, it will create an RMM alert.
-# Will record the status to the asset custom field (You must create an asset custom field named: 'OneDrive Status')
+# Will record the status to an asset custom field & asset activity log. (You must create an asset custom field named: 'OneDrive Status')
 
 # Limitations: 
-# -Must turn off files on demand. If files on demand is enabled, it will return an error state. The module may get this ability in future, for details, see: https://docs.microsoft.com/en-gb/archive/blogs/rodneyviana/powershell-cmdlet-to-check-onedrive-for-business-or-onedrive-personal-status
-# -Windows Desktop OS only, dosnt work on Server OS
+# -Must turn off OnDrive 'files on demand'. If files on-demand is enabled, the script will return an error state. The module may get this ability in future, for details, see: https://docs.microsoft.com/en-gb/archive/blogs/rodneyviana/powershell-cmdlet-to-check-onedrive-for-business-or-onedrive-personal-status
+# -OneDrive Business only. (This is by design - it can be tweaked to work with OneDrive personal if desired)
 
 # By - Adam Matthews - https://unboundedtechnology.com
 # Inspired by Cyberdrain - https://www.cyberdrain.com/monitoring-with-powershell-monitoring-onedrive-status-for-current-logged-on-user/
 
 Import-Module $env:SyncroModule
-
-# Select OneDrive Type (Business/Personal)
-$Type = "Business"
 
 $Source = @"
 using System;  
@@ -298,7 +295,7 @@ $scriptblock = {
 [murrayju.ProcessExtensions.ProcessExtensions]::StartProcessAsCurrentUser("C:\Windows\System32\WindowsPowershell\v1.0\Powershell.exe", "-command $($scriptblock)","C:\Windows\System32\WindowsPowershell\v1.0",$false)
 start-sleep 5
 
-# Gets OneDrive user's display name - Store to variable: $ODUser
+# Gets OneDrive user's display name and stores it to the variable: $ODUser
 $scriptblock2 = {
     $IniFiles = Get-ChildItem "$ENV:LOCALAPPDATA\Microsoft\OneDrive\settings\Business1\ClientPolicy.ini" -ErrorAction SilentlyContinue
     $ODUser = foreach ($inifile in $IniFiles) {
@@ -316,8 +313,7 @@ $ODBUserDisplayName = Get-Content "C:\programdata\Microsoft OneDrive\OneDriveBus
 # Defines what counts as an error state
 $ErrorList = @("NotInstalled", "ReadOnly", "Error", "OndemandOrUnknown")
 
-# Get OneDrive status
-# (Long details, For asset activity log)
+# Get OneDrive status (Long details, For asset activity log)
 $ODStatus = (get-content "C:\programdata\Microsoft OneDrive\OneDriveLogging.txt" | convertfrom-json).value
 foreach ($ODStat in $ODStatus) {
     if ($ODStat.StatusString -in $ErrorList) { $ODerrors = "OneDrive $Type is unhealthy! `n - Current Status: $($ODStat.StatusString) `n - OneDrive User: $ODBUserDisplayName `n - Windows User: $($ODStat.UserName)" }
@@ -325,8 +321,7 @@ foreach ($ODStat in $ODStatus) {
 if (!$ODerrors) {
     $ODerrors = "OneDrive $Type is healthy! `n - Current Status: $($ODStat.StatusString) `n - OneDrive User: $ODBUserDisplayName `n - Windows User: $($ODStat.UserName)"
 }
-# Get OneDrive status
-# (Short details, for asset custom field)
+# Get OneDrive status (Short details, for asset custom field)
 $dateUKformat = Get-Date -Format "dd/MM/yy - HH:mm"
 foreach ($ODStat in $ODStatus) {
     if ($ODStat.StatusString -in $ErrorList) { $ODerrors2 = "Unhealthy | $($ODStat.StatusString) | $dateUKformat" }
