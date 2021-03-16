@@ -1,0 +1,43 @@
+# Required utility found here: https://github.com/MikeLierman/TempProber
+
+Import-Module $env:SyncroModule
+
+$warningTemp = 176
+$alarmTemp = 185
+
+
+$probeInstalled = Test-Path -Path "C:\temp\temp-probe"
+If ($probeInstalled){ 
+    Write-Host "Installed - running the probe"    
+    Start-Process  -FilePath "C:\temp\temp-probe\TempProber.exe" -NoNewWindow -Wait -RedirectStandardOutput C:\temp\temp-probe\temperature.txt  -RedirectStandardError C:\temp\temp-probe\temperature_error.txt 
+} ELSE { 
+    Write-Host "Unzipping first.."
+    Expand-Archive C:\temp\temp-probe.zip -DestinationPath C:\temp\temp-probe
+    Write-Host "running the probe"
+    Start-Process  -FilePath "C:\temp\temp-probe\TempProber.exe" -NoNewWindow -Wait -RedirectStandardOutput C:\temp\temp-probe\temperature.txt  -RedirectStandardError C:\temp\temp-probe\temperature_error.txt
+}
+
+$result = gc C:\temp\temp-probe\temperature.txt
+$cpuLine = $result -match "CPU"
+
+IF ($cpuLine) {
+    $temperature = $cpuline | select-string -pattern '\d+' -allmatches  | % { $_.Matches } | % { $_.Value }
+    
+    IF ([int]$temperature -gt $alarmTemp){
+        write-host "CPU is HOT! ... currently at $temperature fahrenheit. The Alarm temp is set to $alarmTemp fahrenheit."  
+        Rmm-Alert -Category 'cpu_temp_alarm' -Body "CPU is HOT! ... currently at $temperature fahrenheit. The Alarm temp is set to $alarmTemp fahrenheit."
+        Log-Activity -Message "CPU is HOT! ... currently at $temperature fahrenheit. The Alarm temp is set to $alarmTemp fahrenheit." -EventName "Temperature Monitor"
+    }
+    ELSEIF ([int]$temperature -gt $warningTemp){
+        write-host "CPU is getting warm, currently at $temperature fahrenheit. The Alarm temp is set to $alarmTemp fahrenheit." 
+        Log-Activity -Message "CPU is getting warm, currently at $temperature fahrenheit. The Alarm temp is set to $alarmTemp fahrenheit." -EventName "Temperature Monitor"
+    }
+    ELSE {
+        write-host "CPU temperature is acceptable, currently at $temperature fahrenheit. The Alarm temp is set to $alarmTemp fahrenheit."
+    }
+    
+} ELSE {
+    write-host "Could not find a CPU result from openhardwaremonitor"
+}
+
+
