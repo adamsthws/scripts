@@ -1,6 +1,7 @@
 # Will get OneDrive status for the currently logged in user.
-# If OneDrive is not running or is in an error state, it will create an RMM alert.
-# Will record the status to an asset custom field & asset activity log. (You must create an asset custom field named: 'OneDrive Status')
+# If OneDrive is not running or is in an error state, it will create an RMM alert (which includes details such as OD status & affected user).
+# Will record the status to an asset custom field & asset activity log. 
+# You must create an asset custom field named: 'OneDrive Status'
 
 # Limitations: 
 # -Must turn off OnDrive 'files on demand'. If files on-demand is enabled, the script will return an error state. The module may get this ability in future, for details, see: https://docs.microsoft.com/en-gb/archive/blogs/rodneyviana/powershell-cmdlet-to-check-onedrive-for-business-or-onedrive-personal-status
