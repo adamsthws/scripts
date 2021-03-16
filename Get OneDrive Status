@@ -338,5 +338,5 @@ write-host `n $ODerrors
 
 # Create a Syncro RMM alert if OneDrive is in an error state
 foreach ($ODStat in $ODStatus) {
-    if ($ODStat.StatusString -in $ErrorList) { Rmm-Alert -Category "OneDrive $Type Status" -Body "$ODerrors" }
+    if ($ODStat.StatusString -in $ErrorList) { Rmm-Alert -Category "OneDrive Status" -Body "$ODerrors" }
 }
