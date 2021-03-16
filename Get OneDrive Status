@@ -317,10 +317,10 @@ $ErrorList = @("NotInstalled", "ReadOnly", "Error", "OndemandOrUnknown")
 # Get OneDrive status (Long details, For asset activity log)
 $ODStatus = (get-content "C:\programdata\Microsoft OneDrive\OneDriveLogging.txt" | convertfrom-json).value
 foreach ($ODStat in $ODStatus) {
-    if ($ODStat.StatusString -in $ErrorList) { $ODerrors = "OneDrive $Type is unhealthy! `n - Current Status: $($ODStat.StatusString) `n - OneDrive User: $ODBUserDisplayName `n - Windows User: $($ODStat.UserName)" }
+    if ($ODStat.StatusString -in $ErrorList) { $ODerrors = "OneDrive is unhealthy! `n - Current Status: $($ODStat.StatusString) `n - OneDrive User: $ODBUserDisplayName `n - Windows User: $($ODStat.UserName)" }
 }
 if (!$ODerrors) {
-    $ODerrors = "OneDrive $Type is healthy! `n - Current Status: $($ODStat.StatusString) `n - OneDrive User: $ODBUserDisplayName `n - Windows User: $($ODStat.UserName)"
+    $ODerrors = "OneDrive is healthy! `n - Current Status: $($ODStat.StatusString) `n - OneDrive User: $ODBUserDisplayName `n - Windows User: $($ODStat.UserName)"
 }
 # Get OneDrive status (Short details, for asset custom field)
 $dateUKformat = Get-Date -Format "dd/MM/yy - HH:mm"
@@ -332,7 +332,7 @@ if (!$ODerrors2) {
 }
 
 # Log the details
-Log-Activity -Message $ODerrors -EventName "OneDrive $Type Status"
+Log-Activity -Message $ODerrors -EventName "OneDrive Status"
 Set-Asset-Field -Name "OneDrive Status" -Value $ODerrors2
 write-host `n $ODerrors
 
